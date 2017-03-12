@@ -1,0 +1,55 @@
+
+
+{% for elem in mat %}
+	{% for num in elem %}
+		{% if num > 0 %}
+
+		<input type="text" value="{{ num }}" style="width: 30px; margin-right: 10px;">
+
+		{% else %}
+
+		<input type="text" value="" style="width: 30px; margin-right: 10px;">
+
+		{% endif %}
+	{% endfor %}
+	<br>
+	<br>
+{% endfor %}
+
+<button onclick="upload()">Solve</button>
+
+		<img src="http://127.0.0.1:5000/static/images/seen.png">
+
+
+
+
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+
+<script>
+	
+	x = Math.random();
+
+	$('img').attr('src', 'http://127.0.0.1:5000/static/images/seen.png?'.concat(x));
+	
+	var upload = function() {
+		var fields = $(':text');
+		var nums = [];
+		for(var i = 0; i < fields.length; i++){
+			if(fields[i].value == ""){
+				nums.push("0");
+			}
+			else{
+				nums.push(fields[i].value[0]);
+			}
+		}
+
+		$.get('/upload_refined/'.concat(nums.toString()), function(e){
+			window.location = e;
+		})
+
+	}
+
+</script>

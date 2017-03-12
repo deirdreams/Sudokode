@@ -1,0 +1,67 @@
+<div style="width:100%">
+	<h1 style="text-align:center">Center your image</h1>
+</div>
+<div>
+  <img id="image" src="http://127.0.0.1:5000/static/images/{{filename}}">
+  <div id="filename" style="display:none;">{{filename}}</div>
+</div>
+<div>
+<button onclick="uploadBlob()" style="margin-top: 15px;">Crop</button>
+</div>
+<link  href="http://127.0.0.1:5000/static/css/cropper.min.css" rel="stylesheet">
+<link  href="http://127.0.0.1:5000/static/css/cropperAddOns.css" rel="stylesheet">
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<script src="http://127.0.0.1:5000/static/js/cropper.min.js"></script>
+<script>
+var image = document.getElementById('image');
+var cropper = new Cropper(image, {
+  aspectRatio: 1 / 1,
+  crop: function(e) {
+    console.log(e.detail.x);
+    console.log(e.detail.y);
+    console.log(e.detail.width);
+    console.log(e.detail.height);
+    console.log(e.detail.rotate);
+    console.log(e.detail.scaleX);
+    console.log(e.detail.scaleY);
+  }
+});
+
+var uploadBlob = function() {
+	cropper.getCroppedCanvas();
+
+	cropper.getCroppedCanvas({
+	  width: 500,
+	  height: 500
+	});
+
+	var filename = document.getElementById('filename');
+
+	// Upload cropped image to server if the browser supports `HTMLCanvasElement.toBlob`
+	cropper.getCroppedCanvas().toBlob(function (blob) {
+	  var formData = new FormData();
+	   console.log(blob);
+	  formData.append('croppedImage', blob, filename.textContent);
+
+	  // Use `jQuery.ajax` method
+	  $.ajax('/upload_cropped', {
+	    method: "POST",
+	    data: formData,
+	    processData: false,
+	    contentType: false,
+	    success: function (e) {
+	      console.log('Upload success');
+	      window.location = 'http://127.0.0.1:5000/refine';
+	    },
+	    error: function () {
+	      console.log('Upload error');
+	    }
+	  });
+	});	
+}
+
+
+</script>
